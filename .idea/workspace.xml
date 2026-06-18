@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1c1137db-afcb-4080-ad45-a81bf85cccd1" name="Changes" comment="git ignore added and changed the name of the project.">
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/01-scaffold.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/02-error-types.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/03-circuit-breaker.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/04-mock-connectors.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/05-gateway-route.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/06-health-routes.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/07-control-route.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/08-unit-tests.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/09-demo-script.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ockto-gateway/ockto-gateway/plan/PLAN.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/ockto-gateway" />
+    <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;harshvardhan7395&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/harshvardhan7395/Sentinel-gateway.git&quot;,
+    &quot;accountId&quot;: &quot;146c30ce-a915-4ebd-a9a1-f0a395a7de7a&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3FIvUlZll7FJvCiEd8l06bBeOmf" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/harsh/Projects/ockto&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.test.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/harsh/Projects/ockto/ockto-gateway/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/ockto-gateway" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.start">
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ockto-gateway/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ockto-gateway/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.31033.133" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1c1137db-afcb-4080-ad45-a81bf85cccd1" name="Changes" comment="" />
+      <created>1781775416264</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781775416264</updated>
+      <workItem from="1781775417446" duration="9885000" />
+    </task>
+    <task id="LOCAL-00001" summary="git ignore added and changed the name of the project.">
+      <option name="closed" value="true" />
+      <created>1781792173717</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781792173717</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="git ignore added and changed the name of the project." />
+    <option name="LAST_COMMIT_MESSAGE" value="git ignore added and changed the name of the project." />
+  </component>
+</project>
