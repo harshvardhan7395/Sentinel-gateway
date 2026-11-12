@@ -26,6 +26,7 @@ coverage/
 Thumbs.db
 
 # IDE
-ockto-gateway/.idea/
+.idea/
 .vscode/
 *.swp
+plan/
