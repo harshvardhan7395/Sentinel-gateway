@@ -4,6 +4,7 @@ import { digidConnector } from '../connectors/digid';
 import { idinConnector } from '../connectors/idin';
 import { ConnectorResult } from '../connectors/base';
 import { SourceUnavailable, UserNotFound, ConsentRevoked } from '../errors/types';
+import { recordEvent } from '../observability/events';
 
 const digidBreaker: GatewayBreaker<[string], ConnectorResult> = createBreaker(
   'digid',
@@ -34,11 +35,26 @@ router.post('/fetch', async (req: Request, res: Response) => {
   }
 
   const breaker = breakers[source];
+  const started = Date.now();
+  res.on('finish', () => {
+    recordEvent({
+      source,
+      status: res.statusCode,
+      code: res.statusCode >= 400 ? (res.locals['errorCode'] as string | undefined) : undefined,
+      latencyMs: Date.now() - started,
+      circuitAfter: breaker.getState(),
+    });
+  });
 
   try {
     const result = await breaker.fire(userId);
     res.json(result);
   } catch (err) {
+    if (err instanceof SourceUnavailable || err instanceof UserNotFound || err instanceof ConsentRevoked) {
+      res.locals['errorCode'] = err.code;
+    } else {
+      res.locals['errorCode'] = 'INTERNAL_ERROR';
+    }
     if (err instanceof SourceUnavailable) {
       res.status(503).json({
         code: err.code,

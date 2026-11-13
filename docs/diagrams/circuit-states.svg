@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="450" viewBox="0 0 760 450" role="img" aria-label="Circuit breaker states. Closed trips to Open when the failure rate is over 60% across at least 5 requests. Open moves to Half-open after 10 seconds. From Half-open, a successful probe returns to Closed and a failed probe returns to Open. Successes and domain errors keep the circuit Closed.">
+  <style>
+  text { font-family: 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1b2230; }
+  .box { stroke-width: 2; }
+  .b-closed { fill: #e2f3e7; stroke: #1f7a3d; }
+  .b-open { fill: #fbe5e3; stroke: #b42318; stroke-width: 2; }
+  .b-half { fill: #fcefd9; stroke: #a35c00; }
+  .name { font-size: 18px; font-weight: 600; letter-spacing: .06em; }
+  .t-closed { fill: #1f7a3d; } .t-open { fill: #b42318; font-weight: 600; } .t-half { fill: #a35c00; }
+  .desc { font-size: 13px; }
+  .lbl { font-size: 13px; font-weight: 600; }
+  .lbl-sub { font-size: 12px; fill: #5b6577; }
+  .arrow { fill: none; stroke-width: 2.25; }
+  .s-closed { stroke: #1f7a3d; } .s-open { stroke: #b42318; } .s-half { stroke: #a35c00; }
+  .f-closed { fill: #1f7a3d; } .f-open { fill: #b42318; } .f-half { fill: #a35c00; }
+  .node { fill: #ffffff; stroke: #5b6577; stroke-width: 1.5; }
+  .node-ext { fill: #eef1f5; stroke: #5b6577; stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .boundary { fill: #e3f1f3; stroke: #0f6b7a; stroke-width: 1.5; stroke-dasharray: 7 5; }
+  .group { fill: #ffffff; stroke: #dde1e8; stroke-width: 1.5; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 12px; fill: #5b6577; }
+  .s.t-open { fill: #b42318; }
+  .lbl-sub.t-open { fill: #b42318; }
+  .cap { font-size: 12px; font-weight: 600; letter-spacing: .08em; fill: #0f6b7a; }
+  .w { fill: none; stroke-width: 2; }
+  .main { stroke: #0f6b7a; } .plain { stroke: #5b6577; }
+  .read { stroke: #5b6577; stroke-dasharray: 5 4; }
+  .bad { stroke: #b42318; stroke-width: 2.5; } .bad-dash { stroke: #b42318; stroke-dasharray: 6 4; }
+  .life { stroke: #5b6577; stroke-width: 1.25; stroke-dasharray: 3 5; }
+  .fm { fill: #0f6b7a; } .fp { fill: #5b6577; } .fb { fill: #b42318; }
+</style>
+  <rect width="100%" height="100%" rx="12" fill="#ffffff"/>
+  <defs>
+    <marker id="ah-closed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-closed"/></marker>
+    <marker id="ah-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-open"/></marker>
+    <marker id="ah-half" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-half"/></marker>
+  </defs>
+
+  <!-- Closed: self-loop -->
+  <path d="M115,100 C115,44 175,44 175,98" class="arrow s-closed" marker-end="url(#ah-closed)"/>
+  <text x="145" y="30" text-anchor="middle" class="lbl">success or domain error</text>
+
+  <!-- Closed -> Open -->
+  <line x1="250" y1="140" x2="506" y2="140" class="arrow s-open" marker-end="url(#ah-open)"/>
+  <text x="380" y="112" text-anchor="middle" class="lbl">failure rate over 60%</text>
+  <text x="380" y="128" text-anchor="middle" class="lbl-sub">of at least 5 requests</text>
+
+  <!-- Open -> Half-open -->
+  <line x1="585" y1="196" x2="494" y2="336" class="arrow s-half" marker-end="url(#ah-half)"/>
+  <text x="522" y="258" text-anchor="end" class="lbl">after 10 s</text>
+  <text x="516" y="274" text-anchor="end" class="lbl-sub">resetTimeout</text>
+
+  <!-- Half-open -> Open -->
+  <line x1="490" y1="384" x2="643" y2="200" class="arrow s-open" marker-end="url(#ah-open)"/>
+  <text x="594" y="300" class="lbl">probe fails</text>
+  <text x="588" y="316" class="lbl-sub">wait another 10 s</text>
+
+  <!-- Half-open -> Closed -->
+  <line x1="270" y1="380" x2="162" y2="200" class="arrow s-closed" marker-end="url(#ah-closed)"/>
+  <text x="205" y="300" text-anchor="end" class="lbl">probe succeeds</text>
+  <text x="200" y="316" text-anchor="end" class="lbl-sub">back to normal</text>
+
+  <!-- States -->
+  <rect x="30" y="100" width="220" height="96" rx="10" class="box b-closed"/>
+  <text x="140" y="136" text-anchor="middle" class="name t-closed">CLOSED</text>
+  <text x="140" y="158" text-anchor="middle" class="desc">requests reach the upstream</text>
+  <text x="140" y="176" text-anchor="middle" class="desc">failures are counted</text>
+
+  <rect x="510" y="100" width="220" height="96" rx="10" class="box b-open"/>
+  <text x="620" y="136" text-anchor="middle" class="name t-open">OPEN</text>
+  <text x="620" y="158" text-anchor="middle" class="desc">requests rejected in ~3 ms</text>
+  <text x="620" y="176" text-anchor="middle" class="desc">upstream gets no traffic</text>
+
+  <rect x="270" y="330" width="220" height="96" rx="10" class="box b-half"/>
+  <text x="380" y="366" text-anchor="middle" class="name t-half">HALF-OPEN</text>
+  <text x="380" y="388" text-anchor="middle" class="desc">one probe request let through</text>
+  <text x="380" y="406" text-anchor="middle" class="desc">its result decides what's next</text>
+</svg>

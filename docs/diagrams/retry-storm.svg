@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="420" viewBox="0 0 820 420" role="img" aria-label="Retry storm without a circuit breaker. One user request makes the gateway call DigiD three times with backoff waits between attempts. All three fail, and the user gets a 500 error after about 800 ms. Every user repeats this, so DigiD gets three times the load while it is already failing.">
+  <style>
+  text { font-family: 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1b2230; }
+  .box { stroke-width: 2; }
+  .b-closed { fill: #e2f3e7; stroke: #1f7a3d; }
+  .b-open { fill: #fbe5e3; stroke: #b42318; stroke-width: 2; }
+  .b-half { fill: #fcefd9; stroke: #a35c00; }
+  .name { font-size: 18px; font-weight: 600; letter-spacing: .06em; }
+  .t-closed { fill: #1f7a3d; } .t-open { fill: #b42318; font-weight: 600; } .t-half { fill: #a35c00; }
+  .desc { font-size: 13px; }
+  .lbl { font-size: 13px; font-weight: 600; }
+  .lbl-sub { font-size: 12px; fill: #5b6577; }
+  .arrow { fill: none; stroke-width: 2.25; }
+  .s-closed { stroke: #1f7a3d; } .s-open { stroke: #b42318; } .s-half { stroke: #a35c00; }
+  .f-closed { fill: #1f7a3d; } .f-open { fill: #b42318; } .f-half { fill: #a35c00; }
+  .node { fill: #ffffff; stroke: #5b6577; stroke-width: 1.5; }
+  .node-ext { fill: #eef1f5; stroke: #5b6577; stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .boundary { fill: #e3f1f3; stroke: #0f6b7a; stroke-width: 1.5; stroke-dasharray: 7 5; }
+  .group { fill: #ffffff; stroke: #dde1e8; stroke-width: 1.5; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 12px; fill: #5b6577; }
+  .s.t-open { fill: #b42318; }
+  .lbl-sub.t-open { fill: #b42318; }
+  .cap { font-size: 12px; font-weight: 600; letter-spacing: .08em; fill: #0f6b7a; }
+  .w { fill: none; stroke-width: 2; }
+  .main { stroke: #0f6b7a; } .plain { stroke: #5b6577; }
+  .read { stroke: #5b6577; stroke-dasharray: 5 4; }
+  .bad { stroke: #b42318; stroke-width: 2.5; } .bad-dash { stroke: #b42318; stroke-dasharray: 6 4; }
+  .life { stroke: #5b6577; stroke-width: 1.25; stroke-dasharray: 3 5; }
+  .fm { fill: #0f6b7a; } .fp { fill: #5b6577; } .fb { fill: #b42318; }
+</style>
+  <rect width="100%" height="100%" rx="12" fill="#ffffff"/>
+  <defs>
+    <marker id="rs-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fm"/></marker>
+    <marker id="rs-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fb"/></marker>
+  </defs>
+
+  <line x1="110" y1="64" x2="110" y2="372" class="life"/>
+  <line x1="400" y1="64" x2="400" y2="372" class="life"/>
+  <line x1="690" y1="64" x2="690" y2="372" class="life"/>
+
+  <rect x="40" y="16" width="140" height="48" rx="8" class="node"/>
+  <text x="110" y="37" text-anchor="middle" class="t">User</text>
+  <text x="110" y="54" text-anchor="middle" class="s">one of many</text>
+  <rect x="320" y="16" width="160" height="48" rx="8" class="node"/>
+  <text x="400" y="37" text-anchor="middle" class="t">Gateway</text>
+  <text x="400" y="54" text-anchor="middle" class="s">no circuit breaker</text>
+  <rect x="620" y="16" width="140" height="48" rx="8" class="node-ext"/>
+  <text x="690" y="37" text-anchor="middle" class="t">DigiD</text>
+  <text x="690" y="54" text-anchor="middle" class="s t-open">degraded</text>
+
+  <line x1="110" y1="104" x2="397" y2="104" class="w main" marker-end="url(#rs-main)"/>
+  <text x="255" y="94" text-anchor="middle" class="lbl">POST /fetch</text>
+
+  <line x1="400" y1="140" x2="687" y2="140" class="w main" marker-end="url(#rs-main)"/>
+  <text x="545" y="130" text-anchor="middle" class="lbl">attempt 1</text>
+  <line x1="690" y1="168" x2="403" y2="168" class="w bad-dash" marker-end="url(#rs-bad)"/>
+  <text x="545" y="184" text-anchor="middle" class="lbl-sub t-open">fails</text>
+  <text x="390" y="196" text-anchor="end" class="lbl-sub">backoff ~100 ms</text>
+
+  <line x1="400" y1="216" x2="687" y2="216" class="w main" marker-end="url(#rs-main)"/>
+  <text x="545" y="206" text-anchor="middle" class="lbl">retry 1</text>
+  <line x1="690" y1="244" x2="403" y2="244" class="w bad-dash" marker-end="url(#rs-bad)"/>
+  <text x="545" y="260" text-anchor="middle" class="lbl-sub t-open">fails</text>
+  <text x="390" y="272" text-anchor="end" class="lbl-sub">backoff ~200 ms</text>
+
+  <line x1="400" y1="292" x2="687" y2="292" class="w main" marker-end="url(#rs-main)"/>
+  <text x="545" y="282" text-anchor="middle" class="lbl">retry 2</text>
+  <line x1="690" y1="320" x2="403" y2="320" class="w bad-dash" marker-end="url(#rs-bad)"/>
+  <text x="545" y="336" text-anchor="middle" class="lbl-sub t-open">fails</text>
+
+  <line x1="400" y1="360" x2="113" y2="360" class="w bad" marker-end="url(#rs-bad)"/>
+  <text x="255" y="350" text-anchor="middle" class="lbl">500 error</text>
+
+  <path d="M84,104 H76 V360 H84" class="w plain"/>
+  <text transform="translate(64,232) rotate(-90)" text-anchor="middle" class="lbl">≈ 800 ms waiting</text>
+
+  <path d="M736,140 H744 V320 H736" class="w bad"/>
+  <text transform="translate(764,230) rotate(-90)" text-anchor="middle" class="lbl t-open">3 calls per request</text>
+
+  <text x="410" y="404" text-anchor="middle" class="lbl-sub">Every user repeats this, so DigiD gets 3× the load while it is already failing.</text>
+</svg>

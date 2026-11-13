@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="330" viewBox="0 0 820 330" role="img" aria-label="Request flow with the circuit open. The user sends POST /fetch to the gateway, the gateway fires the DigiD breaker, the open breaker rejects immediately without calling DigiD, and the gateway returns 503 SOURCE_UNAVAILABLE in about 3 ms.">
+  <style>
+  text { font-family: 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1b2230; }
+  .box { stroke-width: 2; }
+  .b-closed { fill: #e2f3e7; stroke: #1f7a3d; }
+  .b-open { fill: #fbe5e3; stroke: #b42318; stroke-width: 2; }
+  .b-half { fill: #fcefd9; stroke: #a35c00; }
+  .name { font-size: 18px; font-weight: 600; letter-spacing: .06em; }
+  .t-closed { fill: #1f7a3d; } .t-open { fill: #b42318; font-weight: 600; } .t-half { fill: #a35c00; }
+  .desc { font-size: 13px; }
+  .lbl { font-size: 13px; font-weight: 600; }
+  .lbl-sub { font-size: 12px; fill: #5b6577; }
+  .arrow { fill: none; stroke-width: 2.25; }
+  .s-closed { stroke: #1f7a3d; } .s-open { stroke: #b42318; } .s-half { stroke: #a35c00; }
+  .f-closed { fill: #1f7a3d; } .f-open { fill: #b42318; } .f-half { fill: #a35c00; }
+  .node { fill: #ffffff; stroke: #5b6577; stroke-width: 1.5; }
+  .node-ext { fill: #eef1f5; stroke: #5b6577; stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .boundary { fill: #e3f1f3; stroke: #0f6b7a; stroke-width: 1.5; stroke-dasharray: 7 5; }
+  .group { fill: #ffffff; stroke: #dde1e8; stroke-width: 1.5; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 12px; fill: #5b6577; }
+  .s.t-open { fill: #b42318; }
+  .lbl-sub.t-open { fill: #b42318; }
+  .cap { font-size: 12px; font-weight: 600; letter-spacing: .08em; fill: #0f6b7a; }
+  .w { fill: none; stroke-width: 2; }
+  .main { stroke: #0f6b7a; } .plain { stroke: #5b6577; }
+  .read { stroke: #5b6577; stroke-dasharray: 5 4; }
+  .bad { stroke: #b42318; stroke-width: 2.5; } .bad-dash { stroke: #b42318; stroke-dasharray: 6 4; }
+  .life { stroke: #5b6577; stroke-width: 1.25; stroke-dasharray: 3 5; }
+  .fm { fill: #0f6b7a; } .fp { fill: #5b6577; } .fb { fill: #b42318; }
+</style>
+  <rect width="100%" height="100%" rx="12" fill="#ffffff"/>
+  <defs>
+    <marker id="sq-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fm"/></marker>
+    <marker id="sq-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fb"/></marker>
+  </defs>
+
+  <!-- Lifelines -->
+  <line x1="90" y1="64" x2="90" y2="318" class="life"/>
+  <line x1="300" y1="64" x2="300" y2="318" class="life"/>
+  <line x1="520" y1="64" x2="520" y2="318" class="life"/>
+  <line x1="730" y1="64" x2="730" y2="318" class="life"/>
+
+  <!-- Participants -->
+  <rect x="20" y="16" width="140" height="48" rx="8" class="node"/>
+  <text x="90" y="37" text-anchor="middle" class="t">User</text>
+  <text x="90" y="54" text-anchor="middle" class="s">browser / app</text>
+  <rect x="230" y="16" width="140" height="48" rx="8" class="node"/>
+  <text x="300" y="37" text-anchor="middle" class="t">Gateway</text>
+  <text x="300" y="54" text-anchor="middle" class="s">POST /fetch route</text>
+  <rect x="440" y="16" width="160" height="48" rx="8" class="b-open"/>
+  <text x="520" y="37" text-anchor="middle" class="t">DigiD breaker</text>
+  <text x="520" y="54" text-anchor="middle" class="s t-open">state: OPEN</text>
+  <rect x="660" y="16" width="140" height="48" rx="8" class="node-ext"/>
+  <text x="730" y="37" text-anchor="middle" class="t">DigiD</text>
+  <text x="730" y="54" text-anchor="middle" class="s">degraded</text>
+
+  <!-- 1. request -->
+  <line x1="90" y1="110" x2="297" y2="110" class="w main" marker-end="url(#sq-main)"/>
+  <text x="195" y="100" text-anchor="middle" class="lbl">POST /fetch?source=digid</text>
+
+  <!-- 2. fire -->
+  <line x1="300" y1="158" x2="517" y2="158" class="w main" marker-end="url(#sq-main)"/>
+  <text x="410" y="148" text-anchor="middle" class="lbl">fire(userId)</text>
+
+  <!-- 3. no upstream call -->
+  <line x1="520" y1="200" x2="658" y2="200" class="w read"/>
+  <line x1="664" y1="192" x2="680" y2="208" class="w bad"/>
+  <line x1="664" y1="208" x2="680" y2="192" class="w bad"/>
+  <text x="590" y="190" text-anchor="middle" class="lbl-sub">no call is made</text>
+
+  <!-- 4. reject -->
+  <line x1="520" y1="244" x2="303" y2="244" class="w bad-dash" marker-end="url(#sq-bad)"/>
+  <text x="410" y="234" text-anchor="middle" class="lbl">rejected immediately</text>
+  <text x="410" y="262" text-anchor="middle" class="lbl-sub">EOPENBREAKER</text>
+
+  <!-- 5. response -->
+  <line x1="300" y1="292" x2="93" y2="292" class="w bad" marker-end="url(#sq-bad)"/>
+  <text x="195" y="282" text-anchor="middle" class="lbl">503 SOURCE_UNAVAILABLE</text>
+
+  <!-- Elapsed time -->
+  <path d="M64,110 H56 V292 H64" class="w plain"/>
+  <text transform="translate(44,201) rotate(-90)" text-anchor="middle" class="lbl">≈ 3 ms total</text>
+</svg>

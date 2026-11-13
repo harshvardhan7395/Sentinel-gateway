@@ -1,4 +1,4 @@
-import { Connector, ConnectorResult, ConnectorState, withRetry } from './base';
+import { Connector, ConnectorResult, ConnectorState, withRetry, simulateNetwork } from './base';
 import { UserNotFound, ConsentRevoked } from '../errors/types';
 
 class DigiDConnector implements Connector {
@@ -21,6 +21,8 @@ class DigiDConnector implements Connector {
   }
 
   private async callSource(userId: string): Promise<ConnectorResult> {
+    await simulateNetwork();
+
     if (this.state === 'down') {
       throw new Error('TRANSIENT');
     }

@@ -13,6 +13,17 @@ export interface Connector {
   getState(): ConnectorState;
 }
 
+// Simulated network latency for the mock upstreams, so a fast-fail is visibly
+// faster than a real call. Override with UPSTREAM_LATENCY_MS; 0 under Jest.
+const BASE_LATENCY_MS = Number(
+  process.env['UPSTREAM_LATENCY_MS'] ?? (process.env['NODE_ENV'] === 'test' ? 0 : 120),
+);
+
+export async function simulateNetwork(): Promise<void> {
+  if (BASE_LATENCY_MS <= 0) return;
+  await new Promise((r) => setTimeout(r, jitter(BASE_LATENCY_MS)));
+}
+
 function jitter(base: number): number {
   return base + Math.random() * base * 0.3;
 }

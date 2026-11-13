@@ -54,7 +54,12 @@ export function createBreaker<TArgs extends unknown[], TResult>(
         if (breaker.opened || (err instanceof Error && (err as NodeJS.ErrnoException).code === 'EOPENBREAKER')) {
           throw new SourceUnavailable(source, `${source} circuit is open — failing fast`);
         }
-        throw err;
+        // Any other failure (retries exhausted, timeout) is still an upstream
+        // availability problem: surface it as a typed error, never a generic 500.
+        if (err instanceof SourceUnavailable) throw err;
+        throw new SourceUnavailable(source, `${source} is unavailable — upstream request failed`, {
+          cause: err instanceof Error ? err.message : String(err),
+        });
       }
     },
     getState(): BreakerState {

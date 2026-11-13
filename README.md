@@ -61,7 +61,7 @@ npm start
 
 ```bash
 npm test
-# → 22 tests, 3 suites, all passing
+# → 23 tests, 3 suites, all passing
 ```
 
 ## API
@@ -73,6 +73,7 @@ npm test
 | `GET` | `/ready` | 503 if all circuits open, 200 otherwise |
 | `GET` | `/live` | Always 200 — process alive |
 | `POST` | `/control` | Toggle connector state (demo only) |
+| `GET` | `/dashboard` | Live demo dashboard (HTML); data at `/dashboard/state` |
 
 ### Example responses
 
@@ -123,6 +124,47 @@ The script walks through:
 6. Wait 11 seconds — circuit moves to `half-open`
 7. Toggle DigiD back to healthy — probe succeeds, circuit returns to `closed`
 8. Normal operation resumes
+
+## Circuit breaker configuration
+
+| Parameter | Default | Notes |
+|---|---|---|
+| `errorThresholdPercentage` | 60 | Trips when >60% of requests fail |
+| `volumeThreshold` | 5 | Minimum requests before rate is evaluated |
+| `resetTimeout` | 10 000 ms | Time in `open` before moving to `half-open` |
+| `timeout` | 3 000 ms | Per-request timeout before counting as failure |
+
+Domain errors (`USER_NOT_FOUND`, `CONSENT_REVOKED`) are excluded from failure-rate counting via opossum's `errorFilter` — a user authentication failure is not an infrastructure problem and should not trip the circuit## Demo
+
+### Live dashboard
+
+With the server running, open **http://localhost:3000/dashboard**. It polls `/dashboard/state` every 250 ms and shows:
+
+- each connector's circuit state (closed / open / half-open) and its upstream mode
+- `/ready` status (turns 503 only when every circuit is open)
+- a live feed of `POST /fetch` requests with status, typed error code and latency. Fast-fails are flagged ⚡.
+- a timeline of state transitions
+
+You can also switch upstream modes and send traffic from the dashboard buttons.
+
+### Scripted walkthrough
+
+```bash
+./demo.sh          # step-by-step: press Enter to advance (good for narrating)
+./demo.sh --auto   # run straight through
+```
+
+Start from a fresh server (`npm start`); the script refuses to run if a circuit is still open from a previous run. It walks through:
+1. Healthy fetch: circuit closed, data returned
+2. Domain errors (`USER_NOT_FOUND`) do not trip the circuit
+3. DigiD goes down: requests retry with backoff, then return typed `SOURCE_UNAVAILABLE` (503)
+4. Requests keep coming until the circuit trips to `open`
+5. Fast-fail: the request is rejected in a few ms with no upstream call
+6. `/ready` stays `200` because the iDIN circuit is still `closed`
+7. After `resetTimeout` the circuit moves to `half-open`
+8. DigiD recovers, the probe succeeds and the circuit returns to `closed`
+
+Mock upstreams add ~120 ms of simulated network latency (set `UPSTREAM_LATENCY_MS` to change it; 0 under Jest), so fast-fail is visibly faster than a real call.
 
 ## Circuit breaker configuration
 

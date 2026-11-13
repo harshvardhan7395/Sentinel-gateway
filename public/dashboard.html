@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinel Gateway — Live</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+    --green: #3fb950; --red: #f85149; --amber: #d29922; --blue: #58a6ff;
+    --green-bg: rgba(63,185,80,.15); --red-bg: rgba(248,81,73,.15); --amber-bg: rgba(210,153,34,.18);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif; }
+  .mono { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; }
+  header { display: flex; align-items: center; gap: 16px; padding: 20px 28px;
+           border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+  header .sub { color: var(--muted); font-size: 14px; }
+  .spacer { flex: 1; }
+  .pill { padding: 6px 14px; border-radius: 999px; font-weight: 600; font-size: 14px;
+          border: 1px solid transparent; transition: all .25s; }
+  .pill.ok { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+  .pill.bad { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 24px 28px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .panel h2 { margin: 0 0 4px; font-size: 20px; }
+  .panel .desc { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .state { font-size: 40px; font-weight: 700; letter-spacing: .02em; padding: 14px 18px;
+           border-radius: 10px; text-align: center; text-transform: uppercase; transition: all .3s; }
+  .state.closed { background: var(--green-bg); color: var(--green); }
+  .state.open { background: var(--red-bg); color: var(--red); animation: pulse 1.2s infinite; }
+  .state.half-open { background: var(--amber-bg); color: var(--amber); }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 6px rgba(248,81,73,.25); } }
+  .since { color: var(--muted); font-size: 13px; text-align: center; margin-top: 6px; min-height: 18px; }
+  .machine { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 16px 0; font-size: 13px; }
+  .machine span.node { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted); }
+  .machine span.node.on.closed { border-color: var(--green); color: var(--green); }
+  .machine span.node.on.open { border-color: var(--red); color: var(--red); }
+  .machine span.node.on.half-open { border-color: var(--amber); color: var(--amber); }
+  .machine .arrow { color: var(--border); }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .row label { color: var(--muted); font-size: 13px; width: 120px; }
+  button { background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 6px;
+           padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  button:hover { border-color: var(--blue); }
+  button.sel { background: var(--blue); border-color: var(--blue); color: #0d1117; font-weight: 600; }
+  button.fire { border-color: var(--blue); color: var(--blue); }
+  .wide { grid-column: 1 / -1; }
+  .two { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  td { padding: 6px 8px; border-bottom: 1px solid #21262d; }
+  tr.new { animation: flash 1s ease-out; }
+  @keyframes flash { from { background: rgba(88,166,255,.25); } to { background: transparent; } }
+  .s2 { color: var(--green); } .s4 { color: var(--amber); } .s5 { color: var(--red); }
+  .fast { color: var(--amber); font-weight: 600; }
+  .feed { max-height: 360px; overflow: auto; }
+  .timeline { list-style: none; margin: 0; padding: 0; font-size: 14px; max-height: 360px; overflow: auto; }
+  .timeline li { padding: 6px 0; border-bottom: 1px solid #21262d; }
+  .timeline .t { color: var(--muted); margin-right: 8px; }
+  .empty { color: var(--muted); font-style: italic; padding: 8px; }
+  .conn-err { display: none; background: var(--red-bg); color: var(--red); padding: 10px 28px; }
+  @media (max-width: 900px) { main, .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="conn-err" id="connErr">Cannot reach the gateway. Is <span class="mono">npm start</span> running?</div>
+<header>
+  <div>
+    <h1>Sentinel Gateway</h1>
+    <div class="sub">Live circuit breaker state · polled from <span class="mono">/dashboard/state</span></div>
+  </div>
+  <div class="spacer"></div>
+  <span class="pill ok mono">/live 200</span>
+  <span class="pill ok mono" id="ready">/ready 200</span>
+</header>
+
+<main>
+  <section class="panel" id="card-digid"></section>
+  <section class="panel" id="card-idin"></section>
+
+  <div class="wide two">
+    <section class="panel">
+      <h2>Request feed</h2>
+      <div class="desc">Every <span class="mono">POST /fetch</span> through the gateway. Watch the latency drop to ~0 ms once a circuit opens: the upstream isn't called at all.</div>
+      <div class="feed">
+        <table>
+          <thead><tr><th>Time</th><th>Source</th><th>HTTP</th><th>Result</th><th>Latency</th><th>Circuit</th></tr></thead>
+          <tbody id="feed"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>State transitions</h2>
+      <div class="desc">Circuit lifecycle as it happens</div>
+      <ul class="timeline" id="timeline"></ul>
+    </section>
+  </div>
+</main>
+
+<script>
+const SOURCES = { digid: 'DigiD', idin: 'iDIN' };
+const DESCS = { digid: 'Government identity (mock)', idin: 'Bank identity (mock)' };
+const MODES = ['healthy', 'flaky', 'down'];
+const last = { circuits: {}, upstream: {} };
+const openedAt = {};
+const recovered = {};
+let lastEventId = 0;
+const transitions = [];
+
+function el(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; }
+function time(iso) { return new Date(iso).toLocaleTimeString([], { hour12: false }); }
+
+for (const [key, name] of Object.entries(SOURCES)) {
+  document.getElementById('card-' + key).innerHTML = `
+    <h2>${name}</h2>
+    <div class="desc">${DESCS[key]} · <span class="mono">?source=${key}</span></div>
+    <div class="state closed" id="state-${key}">closed</div>
+    <div class="since" id="since-${key}"></div>
+    <div class="machine">
+      <span class="node" data-s="closed">closed</span><span class="arrow">→</span>
+      <span class="node" data-s="open">open</span><span class="arrow">→</span>
+      <span class="node" data-s="half-open">half-open</span><span class="arrow">→</span>
+      <span class="node" data-s="closed">closed</span>
+    </div>
+    <div class="row"><label>Upstream mode</label>
+      ${MODES.map(m => `<button data-src="${key}" data-mode="${m}">${m}</button>`).join('')}
+    </div>
+    <div class="row"><label>Send traffic</label>
+      <button class="fire" data-fire="${key}" data-n="1">1 request</button>
+      <button class="fire" data-fire="${key}" data-n="10">10 requests</button>
+    </div>`;
+}
+
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.mode) {
+    await fetch('/control', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: b.dataset.src, state: b.dataset.mode }) });
+    poll();
+  } else if (b.dataset.fire) {
+    for (let i = 0; i < Number(b.dataset.n); i++) {
+      await fetch('/fetch?source=' + b.dataset.fire, { method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: 'user-42' }) });
+    }
+  }
+});
+
+function addTransition(text, cls) {
+  transitions.unshift({ at: new Date().toISOString(), text, cls });
+  const ul = document.getElementById('timeline');
+  ul.innerHTML = transitions.slice(0, 40).map(t =>
+    `<li><span class="t mono">${time(t.at)}</span><span class="${t.cls}">${t.text}</span></li>`).join('');
+}
+
+function render(s) {
+  const ready = document.getElementById('ready');
+  ready.textContent = s.ready ? '/ready 200' : '/ready 503';
+  ready.className = 'pill mono ' + (s.ready ? 'ok' : 'bad');
+
+  for (const key of Object.keys(SOURCES)) {
+    const c = s.circuits[key];
+    const prev = last.circuits[key];
+    if (prev && prev !== c) {
+      const cls = c === 'open' ? 's5' : c === 'half-open' ? 's4' : 's2';
+      addTransition(`${SOURCES[key]} circuit ${prev} → ${c}`, cls);
+    }
+    if (c === 'open' && prev !== 'open') openedAt[key] = Date.now();
+    if (c !== 'open') delete openedAt[key];
+
+    const u = s.upstream[key];
+    if (last.upstream[key] && last.upstream[key] !== u) addTransition(`${SOURCES[key]} upstream set to ${u}`, '');
+
+    const box = document.getElementById('state-' + key);
+    box.textContent = c; box.className = 'state ' + c;
+    document.getElementById('since-' + key).textContent = openedAt[key]
+      ? `failing fast for ${((Date.now() - openedAt[key]) / 1000).toFixed(1)} s`
+      : c === 'half-open' ? 'next request is a probe' : '';
+
+    const card = document.getElementById('card-' + key);
+    const nodes = card.querySelectorAll('.machine .node');
+    // Highlight the trailing "closed" once the circuit has recovered, until it trips again.
+    if (prev && prev !== 'closed' && c === 'closed') recovered[key] = true;
+    if (c === 'open') recovered[key] = false;
+    nodes.forEach((n, i) => {
+      const on = n.dataset.s === c && (c !== 'closed' || (recovered[key] ? i === 3 : i === 0));
+      n.className = 'node' + (on ? ' on ' + c : '');
+    });
+    card.querySelectorAll('button[data-mode]').forEach(btn =>
+      btn.classList.toggle('sel', btn.dataset.mode === u));
+  }
+
+  const fresh = s.events.filter(e => e.id > lastEventId);
+  if (fresh.length) {
+    lastEventId = Math.max(...fresh.map(e => e.id));
+    const tbody = document.getElementById('feed');
+    for (const e of fresh.reverse()) {
+      const sc = 's' + String(e.status)[0];
+      const fast = e.code === 'SOURCE_UNAVAILABLE' && e.latencyMs < 20;
+      const row = el(`<tr class="new mono">
+        <td>${time(e.at)}</td><td>${SOURCES[e.source] || e.source}</td>
+        <td class="${sc}">${e.status}</td><td class="${sc}">${e.code || 'OK'}</td>
+        <td class="${fast ? 'fast' : ''}">${e.latencyMs} ms${fast ? ' ⚡ fast-fail' : ''}</td>
+        <td>${e.circuitAfter}</td></tr>`);
+      tbody.prepend(row);
+    }
+    while (tbody.children.length > 50) tbody.lastChild.remove();
+  }
+  if (!document.getElementById('feed').children.length) {
+    document.getElementById('feed').innerHTML = '<tr><td colspan="6" class="empty">No requests yet</td></tr>';
+  } else {
+    document.querySelectorAll('#feed .empty').forEach(n => n.parentElement.remove());
+  }
+
+  last.circuits = s.circuits; last.upstream = s.upstream;
+}
+
+async function poll() {
+  try {
+    const res = await fetch('/dashboard/state', { cache: 'no-store' });
+    render(await res.json());
+    document.getElementById('connErr').style.display = 'none';
+  } catch {
+    document.getElementById('connErr').style.display = 'block';
+  }
+}
+poll();
+setInterval(poll, 250);
+</script>
+</body>
+</html>

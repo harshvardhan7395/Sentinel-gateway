@@ -59,6 +59,19 @@ describe('POST /fetch', () => {
   });
 });
 
+describe('POST /fetch — upstream failure', () => {
+  it('should return typed SOURCE_UNAVAILABLE (not a generic 500) when retries are exhausted', async () => {
+    idinConnector.setState('down');
+    const res = await request(app)
+      .post('/fetch?source=idin')
+      .send({ userId: 'user-1' });
+
+    expect(res.status).toBe(503);
+    expect(res.body.code).toBe('SOURCE_UNAVAILABLE');
+    expect(res.body.source).toBe('idin');
+  });
+});
+
 describe('GET /live', () => {
   it('should return 200 regardless of circuit state', async () => {
     digidConnector.setState('down');

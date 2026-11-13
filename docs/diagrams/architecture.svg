@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="460" viewBox="0 0 880 460" role="img" aria-label="Architecture. A client sends POST /fetch to the gateway route, which picks the DigiD or iDIN breaker. Each breaker calls its third-party API with up to 3 attempts. AWS ECS polls the health probes and a browser polls the dashboard; both only read breaker state and never call the third-party APIs.">
+  <style>
+  text { font-family: 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1b2230; }
+  .box { stroke-width: 2; }
+  .b-closed { fill: #e2f3e7; stroke: #1f7a3d; }
+  .b-open { fill: #fbe5e3; stroke: #b42318; stroke-width: 2; }
+  .b-half { fill: #fcefd9; stroke: #a35c00; }
+  .name { font-size: 18px; font-weight: 600; letter-spacing: .06em; }
+  .t-closed { fill: #1f7a3d; } .t-open { fill: #b42318; font-weight: 600; } .t-half { fill: #a35c00; }
+  .desc { font-size: 13px; }
+  .lbl { font-size: 13px; font-weight: 600; }
+  .lbl-sub { font-size: 12px; fill: #5b6577; }
+  .arrow { fill: none; stroke-width: 2.25; }
+  .s-closed { stroke: #1f7a3d; } .s-open { stroke: #b42318; } .s-half { stroke: #a35c00; }
+  .f-closed { fill: #1f7a3d; } .f-open { fill: #b42318; } .f-half { fill: #a35c00; }
+  .node { fill: #ffffff; stroke: #5b6577; stroke-width: 1.5; }
+  .node-ext { fill: #eef1f5; stroke: #5b6577; stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .boundary { fill: #e3f1f3; stroke: #0f6b7a; stroke-width: 1.5; stroke-dasharray: 7 5; }
+  .group { fill: #ffffff; stroke: #dde1e8; stroke-width: 1.5; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 12px; fill: #5b6577; }
+  .s.t-open { fill: #b42318; }
+  .lbl-sub.t-open { fill: #b42318; }
+  .cap { font-size: 12px; font-weight: 600; letter-spacing: .08em; fill: #0f6b7a; }
+  .w { fill: none; stroke-width: 2; }
+  .main { stroke: #0f6b7a; } .plain { stroke: #5b6577; }
+  .read { stroke: #5b6577; stroke-dasharray: 5 4; }
+  .bad { stroke: #b42318; stroke-width: 2.5; } .bad-dash { stroke: #b42318; stroke-dasharray: 6 4; }
+  .life { stroke: #5b6577; stroke-width: 1.25; stroke-dasharray: 3 5; }
+  .fm { fill: #0f6b7a; } .fp { fill: #5b6577; } .fb { fill: #b42318; }
+</style>
+  <rect width="100%" height="100%" rx="12" fill="#ffffff"/>
+  <defs>
+    <marker id="am-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fm"/></marker>
+    <marker id="am-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fp"/></marker>
+  </defs>
+
+  <!-- Process boundary -->
+  <rect x="180" y="16" width="475" height="430" rx="14" class="boundary"/>
+  <text x="198" y="40" class="cap">SENTINEL GATEWAY · ONE NODE.JS PROCESS</text>
+
+  <!-- Breaker group -->
+  <rect x="425" y="56" width="210" height="200" rx="10" class="group"/>
+  <text x="530" y="77" text-anchor="middle" class="s">one breaker per source</text>
+
+  <!-- Request path -->
+  <line x1="140" y1="156" x2="207" y2="156" class="w main" marker-end="url(#am-main)"/>
+  <text x="159" y="146" text-anchor="middle" class="lbl-sub">HTTP</text>
+  <line x1="360" y1="146" x2="437" y2="121" class="w main" marker-end="url(#am-main)"/>
+  <text x="392" y="123" text-anchor="middle" class="lbl-sub">digid</text>
+  <line x1="360" y1="166" x2="437" y2="203" class="w main" marker-end="url(#am-main)"/>
+  <text x="392" y="203" text-anchor="middle" class="lbl-sub">idin</text>
+  <line x1="620" y1="120" x2="737" y2="120" class="w main" marker-end="url(#am-main)"/>
+  <text x="697" y="110" text-anchor="middle" class="lbl-sub">≤ 3 tries</text>
+  <line x1="620" y1="204" x2="737" y2="204" class="w main" marker-end="url(#am-main)"/>
+  <text x="697" y="194" text-anchor="middle" class="lbl-sub">≤ 3 tries</text>
+
+  <!-- Probe and dashboard paths -->
+  <line x1="140" y1="324" x2="207" y2="324" class="w plain" marker-end="url(#am-muted)"/>
+  <text x="159" y="314" text-anchor="middle" class="lbl-sub">polls</text>
+  <line x1="140" y1="404" x2="207" y2="404" class="w plain" marker-end="url(#am-muted)"/>
+  <text x="159" y="394" text-anchor="middle" class="lbl-sub">polls</text>
+
+  <!-- Read-only state bus -->
+  <path d="M360,324 H530" class="w read"/>
+  <path d="M360,404 H530 V259" class="w read" marker-end="url(#am-muted)"/>
+  <circle cx="530" cy="324" r="3.5" class="fp"/>
+  <text x="445" y="315" text-anchor="middle" class="lbl-sub">reads circuit state</text>
+  <text x="445" y="395" text-anchor="middle" class="lbl-sub">reads state + request log</text>
+
+  <!-- Nodes -->
+  <rect x="20" y="120" width="120" height="72" rx="8" class="node"/>
+  <text x="80" y="151" text-anchor="middle" class="t">Client app</text>
+  <text x="80" y="171" text-anchor="middle" class="s">web / mobile</text>
+
+  <rect x="210" y="120" width="150" height="72" rx="8" class="node"/>
+  <text x="285" y="151" text-anchor="middle" class="t">POST /fetch</text>
+  <text x="285" y="171" text-anchor="middle" class="s">routes by ?source=</text>
+
+  <rect x="440" y="88" width="180" height="64" rx="8" class="node"/>
+  <text x="530" y="115" text-anchor="middle" class="t">DigiD breaker</text>
+  <text x="530" y="135" text-anchor="middle" class="s">state + failure window</text>
+
+  <rect x="440" y="172" width="180" height="64" rx="8" class="node"/>
+  <text x="530" y="199" text-anchor="middle" class="t">iDIN breaker</text>
+  <text x="530" y="219" text-anchor="middle" class="s">state + failure window</text>
+
+  <text x="800" y="70" text-anchor="middle" class="cap">THIRD-PARTY APIS</text>
+  <rect x="740" y="88" width="120" height="64" rx="8" class="node-ext"/>
+  <text x="800" y="115" text-anchor="middle" class="t">DigiD</text>
+  <text x="800" y="135" text-anchor="middle" class="s">government ID</text>
+  <rect x="740" y="172" width="120" height="64" rx="8" class="node-ext"/>
+  <text x="800" y="199" text-anchor="middle" class="t">iDIN</text>
+  <text x="800" y="219" text-anchor="middle" class="s">bank ID</text>
+
+  <rect x="20" y="292" width="120" height="64" rx="8" class="node"/>
+  <text x="80" y="319" text-anchor="middle" class="t">AWS ECS</text>
+  <text x="80" y="339" text-anchor="middle" class="s">health checks</text>
+
+  <rect x="210" y="292" width="150" height="64" rx="8" class="node"/>
+  <text x="285" y="319" text-anchor="middle" class="t">/live  /ready</text>
+  <text x="285" y="339" text-anchor="middle" class="s">health probes</text>
+
+  <rect x="20" y="372" width="120" height="64" rx="8" class="node"/>
+  <text x="80" y="399" text-anchor="middle" class="t">Browser</text>
+  <text x="80" y="419" text-anchor="middle" class="s">operator / demo</text>
+
+  <rect x="210" y="372" width="150" height="64" rx="8" class="node"/>
+  <text x="285" y="399" text-anchor="middle" class="t">/dashboard</text>
+  <text x="285" y="419" text-anchor="middle" class="s">live circuit view</text>
+</svg>
